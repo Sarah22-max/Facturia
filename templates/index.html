@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturia - Gestion de Factures</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📋 Facturia</h1>
+            <p>Système de gestion de factures</p>
+        </header>
+
+        <main>
+            <section class="form-section">
+                <h2>Créer une nouvelle facture</h2>
+
+                <form id="invoiceForm">
+                    <!-- Section 1: Informations Entreprise -->
+                    <div class="form-block">
+                        <h3>📋 Informations de l'entreprise</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="company-name">Nom de l'entreprise:</label>
+                                <input type="text" id="company-name" name="company-name" placeholder="Ex: Entreprise ABC" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="company-status">Statut:</label>
+                                <input type="text" id="company-status" name="company-status" placeholder="Ex: SARL, EURL, SAS" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="company-activity">Domaine d'activité:</label>
+                                <input type="text" id="company-activity" name="company-activity" placeholder="Ex: Services, Commerce, Production" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="company-address">Adresse:</label>
+                                <input type="text" id="company-address" name="company-address" placeholder="Ex: 123 Rue Principale, Ville" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="company-info">Informations complémentaires:</label>
+                                <input type="text" id="company-info" name="company-info" placeholder="Ex: RC, ID FISCAL, Téléphone">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Informations Client et Facture -->
+                    <div class="form-block">
+                        <h3>👥 Informations Client & Facture</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="invoice-number">Numéro de facture:</label>
+                                <input type="text" id="invoice-number" name="invoice-number" placeholder="Ex: 001/2026" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="invoice-date">Date de facture:</label>
+                                <input type="date" id="invoice-date" name="invoice-date" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="client-name">Nom du client:</label>
+                                <input type="text" id="client-name" name="client-name" placeholder="Ex: Client XYZ" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="client-number">Numéro client/Fiscal:</label>
+                                <input type="text" id="client-number" name="client-number" placeholder="Ex: 0000.1234567890">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Lignes de produit/service -->
+                    <div class="form-block">
+                        <h3>📦 Lignes de produits/services</h3>
+                        <div class="invoice-table">
+                            <div class="table-header">
+                                <div class="col-qte">QTE</div>
+                                <div class="col-designation">Désignation</div>
+                                <div class="col-pu">P-U</div>
+                                <div class="col-montant">Montant</div>
+                                <div class="col-action">Action</div>
+                            </div>
+                            <div id="invoice-lines" class="table-body"></div>
+                        </div>
+                        <button type="button" class="btn btn-secondary" onclick="addInvoiceLine()">+ Ajouter une ligne</button>
+                    </div>
+
+                    <!-- Section 4: Totaux et TVA -->
+                    <div class="form-block">
+                        <h3>💰 Totaux</h3>
+                        <div class="form-row" style="margin-bottom: 20px;">
+                            <div class="form-group">
+                                <label for="tva-rate">Taux TVA (%):</label>
+                                <input type="number" id="tva-rate" name="tva-rate" value="10" min="0" max="100" step="0.01">
+                            </div>
+                        </div>
+                        <div class="totals-section">
+                            <div class="total-row">
+                                <span class="total-label">H.T (Hors Taxes):</span>
+                                <span class="total-value" id="total-ht">0.00 DH</span>
+                            </div>
+                            <div class="total-row">
+                                <span class="total-label" id="tva-label">TVA 10%:</span>
+                                <span class="total-value" id="total-tva">0.00 DH</span>
+                            </div>
+                            <div class="total-row total-ttc">
+                                <span class="total-label">TTC (Total):</span>
+                                <span class="total-value" id="total-ttc">0.00 DH</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 5: Notes/Conclusion -->
+                    <div class="form-block">
+                        <h3>📝 Notes</h3>
+                        <div class="form-group">
+                            <label for="notes">Phrase de conclusion:</label>
+                            <textarea id="notes" name="notes" placeholder="Ex: ARRÊTÉE LA PRÉSENTE FACTURE À LA SOMME DE..." rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">✓ Créer la facture</button>
+                        <button type="reset" class="btn btn-secondary">↻ Réinitialiser</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="invoices-section">
+                <h2>Liste des factures</h2>
+                <div id="invoicesList" class="invoices-list">
+                    <p class="empty-state">Aucune facture créée</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

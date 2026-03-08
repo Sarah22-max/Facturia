@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facture {{ invoice_number }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .page {
+            background: white;
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 15mm;
+            border-bottom: 3px solid black;
+            padding-bottom: 10mm;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .legal-form {
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+        }
+
+        .activity-description {
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+
+        /* INVOICE INFO */
+        .invoice-info {
+            margin-bottom: 10mm;
+            text-align: left;
+            font-size: 11px;
+            line-height: 1.8;
+        }
+
+        .invoice-info-row {
+            display: flex;
+            margin-bottom: 3px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            width: 50mm;
+        }
+
+        .info-value {
+            flex: 1;
+        }
+
+        /* CLIENT SECTION */
+        .client-section {
+            text-align: center;
+            margin-bottom: 10mm;
+            margin-top: 10mm;
+        }
+
+        .client-header {
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 3px;
+        }
+
+        .client-name {
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .client-identifier {
+            font-size: 10px;
+            margin-top: 2px;
+        }
+
+        /* TABLE */
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10mm;
+            font-size: 10px;
+        }
+
+        .invoice-table thead {
+            background: black;
+            color: white;
+        }
+
+        .invoice-table th {
+            border: 2px solid black;
+            padding: 8px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .invoice-table td {
+            border: 1px solid black;
+            padding: 10px 8px;
+            text-align: center;
+            height: 25px;
+        }
+
+        .invoice-table tbody tr {
+            height: 25px;
+        }
+
+        .invoice-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        /* Column widths */
+        .col-qte {
+            width: 10%;
+        }
+
+        .col-designation {
+            width: 50%;
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .col-pu {
+            width: 20%;
+            text-align: right;
+            padding-right: 8px;
+        }
+
+        .col-montant {
+            width: 20%;
+            text-align: right;
+            padding-right: 8px;
+        }
+
+        /* Totals section */
+        .totals-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10mm;
+            font-size: 10px;
+        }
+
+        .totals-column {
+            width: 180px;
+        }
+
+        .total-row {
+            display: flex;
+            border: 1px solid black;
+            height: 20px;
+        }
+
+        .total-row.total-ht {
+            border-bottom: none;
+        }
+
+        .total-row.total-tva {
+            border-bottom: none;
+            border-top: none;
+        }
+
+        .total-row.total-ttc {
+            border-top: 2px solid black;
+            background: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .total-label {
+            width: 50%;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            border-right: 1px solid black;
+            font-weight: bold;
+        }
+
+        .total-value {
+            width: 50%;
+            padding: 4px 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            font-weight: bold;
+        }
+
+        /* Notes section */
+        .notes-section {
+            font-size: 10px;
+            margin-bottom: 15mm;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .notes-section p {
+            margin-bottom: 5px;
+        }
+
+        /* Footer separator */
+        .footer-separator {
+            border-top: 2px solid black;
+            margin-bottom: 10mm;
+        }
+
+        /* Footer */
+        .footer {
+            font-size: 8px;
+            text-align: center;
+            line-height: 1.6;
+            color: #333;
+            border-top: 2px solid black;
+            padding-top: 8mm;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .page {
+                box-shadow: none;
+                width: 100%;
+                height: auto;
+                margin: 0;
+                padding: 20mm;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+
+        /* Empty row styling */
+        .empty-row {
+            background: white;
+            height: 25px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="company-name">{{ company_name }}</div>
+            <div class="legal-form">{{ legal_form }}</div>
+            <div class="activity-description">{{ activity_description }}</div>
+        </div>
+
+        <!-- INVOICE INFO -->
+        <div class="invoice-info">
+            <div class="invoice-info-row">
+                <div class="info-label">Date facture:</div>
+                <div class="info-value">{{ invoice_date }}</div>
+            </div>
+            <div class="invoice-info-row">
+                <div class="info-label">Facture n°:</div>
+                <div class="info-value">{{ invoice_number }}</div>
+            </div>
+        </div>
+
+        <!-- CLIENT SECTION -->
+        <div class="client-section">
+            <div class="client-header">CLIENT: {{ client_name }}</div>
+            <div class="client-identifier">{{ client_identifier }}</div>
+        </div>
+
+        <!-- TABLE -->
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th class="col-qte">QTE</th>
+                    <th class="col-designation">Désignation</th>
+                    <th class="col-pu">P-U</th>
+                    <th class="col-montant">Montant</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for line in lines %}
+                <tr>
+                    <td class="col-qte">{{ line.qte }}</td>
+                    <td class="col-designation">{{ line.designation }}</td>
+                    <td class="col-pu">{{ "%.2f"|format(line.pu) }}</td>
+                    <td class="col-montant">{{ "%.2f"|format(line.montant) }}</td>
+                </tr>
+                {% endfor %}
+                
+                <!-- Empty rows for spacing -->
+                {% for i in range(5 - lines|length) if lines|length < 5 %}
+                <tr class="empty-row">
+                    <td class="col-qte"></td>
+                    <td class="col-designation"></td>
+                    <td class="col-pu"></td>
+                    <td class="col-montant"></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- TOTALS -->
+        <div class="totals-section">
+            <div class="totals-column">
+                <div class="total-row total-ht">
+                    <div class="total-label">H.T</div>
+                    <div class="total-value">{{ "%.2f"|format(total_ht) }}</div>
+                </div>
+                <div class="total-row total-tva">
+                    <div class="total-label">TVA{{ tva_rate }}%</div>
+                    <div class="total-value">{{ "%.2f"|format(total_tva) }}</div>
+                </div>
+                <div class="total-row total-ttc">
+                    <div class="total-label">TTC</div>
+                    <div class="total-value">{{ "%.2f"|format(total_ttc) }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NOTES -->
+        {% if notes %}
+        <div class="notes-section">
+            <p>{{ notes }}</p>
+        </div>
+        {% endif %}
+
+        <!-- FOOTER SEPARATOR -->
+        <div class="footer-separator"></div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            {{ company_info }}
+        </div>
+    </div>
+
+    <!-- Print button (hidden on print) -->
+    <div style="text-align: center; margin-top: 20px;" class="no-print">
+        <button onclick="window.print()" style="padding: 10px 30px; font-size: 16px; cursor: pointer; background: #2d5a8c; color: white; border: none; border-radius: 5px;">
+            Imprimer / Télécharger PDF
+        </button>
+    </div>
+</body>
+</html>
