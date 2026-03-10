@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Initialiser l'application Flask
-app = Flask(__name__)
+app = Flask(__name__, template_folder=os.path.join(os.path.dirname(__file__), 'templates'), static_folder=os.path.join(os.path.dirname(__file__), 'static'))
 CORS(app)
 
 # Configuration
-IS_PRODUCTION = os.getenv('RENDER') or os.getenv('HEROKU_APP_NAME')
+IS_PRODUCTION = os.getenv('VERCEL') or os.getenv('RENDER') or os.getenv('HEROKU_APP_NAME')
 app.config['DEBUG'] = not IS_PRODUCTION and os.getenv('DEBUG', 'True').lower() == 'true'
 app.url_map.strict_slashes = False  # Désactiver le contrôle strict des slashes
 
